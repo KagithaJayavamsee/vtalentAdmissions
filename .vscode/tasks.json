@@ -11,6 +11,18 @@
 			],
 			"isBackground": false,
 			"problemMatcher": []
+		},
+		{
+			"label": "Django app tests",
+			"type": "shell",
+			"command": "d:/vtalentAdmissions/myvenv/Scripts/python.exe",
+			"args": [
+				"mypro/manage.py",
+				"test",
+				"myapp"
+			],
+			"isBackground": false,
+			"problemMatcher": []
 		}
 	]
 }
