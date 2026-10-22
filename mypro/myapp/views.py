@@ -85,11 +85,15 @@ def staff_login(request):
 
     error = None
     if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
         user = authenticate(
             request,
-            username=request.POST.get('username', '').strip(),
-            password=request.POST.get('password', ''),
+            username=username,
+            password=password,
+            password=password,
         )
+            password=request.POST.get(password=password,
         if user is not None and user.is_staff:
             login(request, user)
             return redirect(next_url or 'admin_dashboard')
