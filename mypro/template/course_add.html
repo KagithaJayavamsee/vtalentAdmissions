@@ -1,0 +1,101 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add a New Course | VTalent</title>
+  <link rel="stylesheet" href="{% static 'css/admin-course-form.css' %}">
+</head>
+<body>
+  <main class="course-page">
+    <header class="page-heading">
+      <h1>Add a New Course</h1>
+      <p>Add the course syllabus and the first batch. Registrations start closed; open them from the dashboard when the form is ready.</p>
+      <a class="back-link" href="{% url 'admin_dashboard' %}">← Back to dashboard</a>
+    </header>
+
+    {% if announcements %}
+      <div class="form-messages" role="status">
+        {% for notice in announcements %}
+          <p>{{ notice.message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if messages %}
+      <div class="form-messages" aria-live="polite">
+        {% for message in messages %}
+          <p class="success-message">{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="error-summary" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form class="course-form" method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-grid">
+        <div class="field">
+          <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+          {{ form.title }}
+          <div class="field-errors" id="id_title_errors" aria-live="polite">{% for error in form.title.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field">
+          <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+          {{ form.category }}
+          <div class="field-errors" id="id_category_errors" aria-live="polite">{% for error in form.category.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field">
+          <label for="{{ form.duration.id_for_label }}">{{ form.duration.label }}</label>
+          {{ form.duration }}
+          <div class="field-errors" id="id_duration_errors" aria-live="polite">{% for error in form.duration.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field">
+          <label for="{{ form.batch_name.id_for_label }}">{{ form.batch_name.label }}</label>
+          {{ form.batch_name }}
+          <div class="field-errors" aria-live="polite">{% for error in form.batch_name.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field">
+          <label for="{{ form.month.id_for_label }}">{{ form.month.label }}</label>
+          {{ form.month }}
+          <div class="field-errors" aria-live="polite">{% for error in form.month.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field">
+          <label for="{{ form.year.id_for_label }}">{{ form.year.label }}</label>
+          {{ form.year }}
+          <div class="field-errors" aria-live="polite">{% for error in form.year.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field field-full">
+          <label for="{{ form.google_form_url.id_for_label }}">{{ form.google_form_url.label }}</label>
+          {{ form.google_form_url }}
+          <div class="field-errors" aria-live="polite">{% for error in form.google_form_url.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field field-full">
+          <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+          {{ form.description }}
+          <div class="field-errors" aria-live="polite">{% for error in form.description.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="field field-full">
+          <label for="{{ form.syllabus.id_for_label }}">{{ form.syllabus.label }}</label>
+          {{ form.syllabus }}
+          <div class="field-errors" id="id_syllabus_errors" aria-live="polite">{% for error in form.syllabus.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+      </div>
+      <button class="submit-button" type="submit" id="add-course-submit">Finish</button>
+    </form>
+  </main>
+  <script>
+    const courseForm = document.querySelector('.course-form');
+    const submitButton = document.getElementById('add-course-submit');
+    courseForm.addEventListener('submit', () => {
+      if (courseForm.checkValidity()) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Adding course…';
+      }
+    });
+  </script>
+</body>
+</html>

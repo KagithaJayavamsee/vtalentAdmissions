@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Django system check",
+			"type": "shell",
+			"command": "d:/vtalentAdmissions/myvenv/Scripts/python.exe",
+			"args": [
+				"mypro/manage.py",
+				"check"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

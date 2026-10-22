@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Courses | VTalent{% endblock %}
+{% block content %}
+<section class="courses-hero">
+  <div class="wrap courses-hero-inner">
+    <div class="courses-hero-copy">
+      <p class="eyebrow">LEARN · BUILD · GROW</p>
+      <h1>Build skills for <span>what's next.</span></h1>
+      <p>Explore career-focused technical training designed to help you learn by doing, build real-world skills and prepare for your next opportunity.</p>
+      <div class="courses-hero-actions">
+        <a class="btn" href="#course-list">Explore courses <span aria-hidden="true">↓</span></a>
+        <a class="courses-contact-link" href="{% url 'registration' %}">Talk to our team <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    <aside class="courses-highlight" aria-label="What you can expect">
+      <span class="courses-highlight-mark" aria-hidden="true">VT</span>
+      <p class="eyebrow light">YOUR NEXT CHAPTER STARTS HERE</p>
+      <h2>Learn with purpose.<br>Grow with confidence.</h2>
+      <ul>
+        <li>Practical, hands-on training</li>
+        <li>Real-time project guidance</li>
+        <li>Career and placement support</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+<section class="section wrap courses-section" id="course-list">
+  <div class="courses-catalog-heading">
+    <div class="section-heading courses-section-heading">
+      <p class="eyebrow">FIND YOUR PATH</p>
+      <h2>Explore our courses</h2>
+      <p>Choose a program and see what you’ll learn, along with the latest batch information.</p>
+    </div>
+    <span class="courses-count"><strong>{{ courses|length }}</strong> program{{ courses|length|pluralize }}</span>
+  </div>
+  <form class="courses-search" action="{% url 'courses' %}" method="get" role="search">
+    <label class="visually-hidden" for="course-search">Search courses</label>
+    <span class="courses-search-icon" aria-hidden="true">⌕</span>
+    <input id="course-search" name="q" type="search" value="{{ search_query }}" placeholder="Search by course, skill or topic" autocomplete="off">
+    <button class="btn" type="submit">Search courses</button>
+    {% if search_query %}<a class="courses-search-clear" href="{% url 'courses' %}">Clear</a>{% endif %}
+  </form>
+  {% if search_query %}<p class="courses-result-label" role="status">Results for “{{ search_query }}”</p>{% endif %}
+  <div class="course-grid courses-grid">
+  {% for course in courses %}
+    <article class="course-card course-detail">
+      <div class="course-card-heading">
+        <span class="course-number">{{ forloop.counter|stringformat:"02d" }}</span>
+        <p class="eyebrow">{{ course.category|default:"TECHNICAL TRAINING" }}</p>
+      </div>
+      <h2>{{ course.title }}</h2>
+      <div class="tag-row"><span class="tag">{{ course.duration }}</span></div>
+      <p class="course-description">{{ course.description|default:"Build practical, career-focused skills with guided training and real-world project work." }}</p>
+      <h4>What you’ll learn</h4>
+      <ul class="syllabus-list">{% for item in course.syllabus_items|slice:":5" %}<li>{{ item }}</li>{% empty %}<li>Practical training and real-time project guidance</li>{% endfor %}</ul>
+      {% if course.syllabus_items|length > 5 %}
+      <details class="syllabus-more">
+        <summary>View all {{ course.syllabus_items|length }} topics</summary>
+        <ul class="syllabus-list">{% for item in course.syllabus_items|slice:"5:" %}<li>{{ item }}</li>{% endfor %}</ul>
+      </details>
+      {% endif %}
+      {% if course.notes.all %}
+      <h4>Course notes</h4>
+      <ul class="syllabus-list">{% for note in course.notes.all %}<li><strong>{{ note.title }}</strong>: {{ note.content|linebreaksbr }}</li>{% endfor %}</ul>
+      {% endif %}
+      <h4>Available batches</h4>
+      {% for batch in course.batches.all %}
+        <div class="available-batch"><div><strong>{{ batch.name }}</strong><small>{{ batch.month_year }} · {{ batch.duration|default:course.duration }}</small></div>{% if batch.can_register %}<span class="status-open">Registrations Open</span><a class="btn btn-mini" href="{{ batch.google_form_url }}" target="_blank" rel="noopener noreferrer">Register here</a>{% else %}{% if batch.registrations_open %}<span class="status-closed">Form coming soon</span>{% else %}<span class="status-closed">Registrations Closed</span>{% endif %}{% endif %}</div>
+      {% empty %}<p class="muted">Batch details will be announced soon.</p>{% endfor %}
+      <a class="btn btn-full" href="{% url 'registration' %}?course={{ course.id }}">View registration options</a>
+    </article>
+  {% empty %}
+    {% if search_query %}
+    <div class="courses-empty">
+      <span aria-hidden="true">⌕</span>
+      <h3>No courses match “{{ search_query }}”</h3>
+      <p>Try another course name or topic, or browse the complete course list.</p>
+      <a class="btn" href="{% url 'courses' %}">View all courses</a>
+    </div>
+    {% else %}
+    <div class="courses-empty">
+      <span aria-hidden="true">✦</span>
+      <h3>New courses are on the way</h3>
+      <p>No courses are published yet. Contact our team for current program information.</p>
+      <a class="btn" href="{% url 'contact' %}">Contact VTalent</a>
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+</section>
+<section class="courses-support-section">
+  <div class="wrap courses-support">
+    <div class="courses-support-copy">
+      <p class="eyebrow light">CAREER SUPPORT</p>
+      <h2>More than classroom training.</h2>
+      <p>Build confidence alongside technical skills with support that helps you get ready for the workplace.</p>
+      <a class="btn courses-support-button" href="{% url 'registration' %}">Start your journey <span aria-hidden="true">→</span></a>
+    </div>
+    <ul class="courses-support-list">
+      <li>Aptitude training</li>
+      <li>GD / JAM sessions</li>
+      <li>Resume preparation and presentation</li>
+      <li>Mock interviews</li>
+      <li>Real-time project work guidance</li>
+      <li>Placement assistance</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}
