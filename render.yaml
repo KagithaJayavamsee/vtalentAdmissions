@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: vtalent-admissions
+    runtime: python
+
+    buildCommand: pip install -r requirements.txt && python mypro/manage.py collectstatic --noinput
+
+    startCommand: python mypro/manage.py migrate --noinput && gunicorn --chdir mypro mypro.wsgi:application --bind 0.0.0.0:$PORT
+
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+
+      - key: DEBUG
+        value: "False"
+
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+
+      - key: TIDB_HOST
+        value: gateway01.us-west-2.prod.aws.tidbcloud.com
+
+      - key: TIDB_PORT
+        value: "4000"
+
+      - key: TIDB_USER
+        sync: false
+
+      - key: TIDB_PASSWORD
+        sync: false
+
+      - key: TIDB_DATABASE
+        value: vtalent_admissions
+
+      - key: TIDB_CA_CERT
+        value: certs/ca.pem

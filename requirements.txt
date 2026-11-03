@@ -1,1 +1,8 @@
--r mypro/requirements.txt
+Django==5.2.18
+djangorestframework==3.18.3
+dj-database-url
+gunicorn
+psycopg[binary]
+PyMySQL==1.2.3
+python-dotenv==1.2.4
+whitenoise
