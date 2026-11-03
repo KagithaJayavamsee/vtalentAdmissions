@@ -115,8 +115,13 @@ WSGI_APPLICATION = 'mypro.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
 DATABASE_URL = os.environ.get('DATABASE_URL')
 TIDB_HOST = os.environ.get('TIDB_HOST')
+
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.parse(
@@ -124,27 +129,35 @@ if DATABASE_URL:
             conn_max_age=600,
         )
     }
+
 elif TIDB_HOST:
+
     tidb_required_settings = {
         'TIDB_DATABASE': os.environ.get('TIDB_DATABASE'),
         'TIDB_USER': os.environ.get('TIDB_USER'),
         'TIDB_PASSWORD': os.environ.get('TIDB_PASSWORD'),
         'TIDB_CA_CERT': os.environ.get('TIDB_CA_CERT'),
     }
+
     missing_tidb_settings = [
         name for name, value in tidb_required_settings.items() if not value
     ]
+
     if missing_tidb_settings:
         raise ImproperlyConfigured(
             'Missing required TiDB environment variables: '
             + ', '.join(missing_tidb_settings)
         )
+
+    # Resolve CA certificate path
     ca_cert_path = Path(tidb_required_settings['TIDB_CA_CERT'])
+
+    if not ca_cert_path.is_absolute():
+        ca_cert_path = BASE_DIR / ca_cert_path
+
     if not ca_cert_path.is_file():
         raise ImproperlyConfigured(
-            f'TIDB_CA_CERT points to a file that does not exist: {ca_cert_path}. '
-            'Download the CA certificate from TiDB Cloud and update TIDB_CA_CERT '
-            'in the project .env file.'
+            f'TIDB_CA_CERT points to a file that does not exist: {ca_cert_path}'
         )
 
     DATABASES = {
@@ -159,15 +172,18 @@ elif TIDB_HOST:
             'CONN_HEALTH_CHECKS': True,
             'OPTIONS': {
                 'charset': 'utf8mb4',
-                'ssl': {'ca': str(ca_cert_path)},
+                'ssl': {
+                    'ca': str(ca_cert_path),
+                },
             },
         }
     }
+
 elif not DEBUG:
     raise ImproperlyConfigured(
-        'Configure DATABASE_URL or TIDB_HOST for production; '
-        'SQLite is only enabled when DEBUG=True.'
+        'Configure DATABASE_URL or TIDB_HOST for production.'
     )
+
 else:
     DATABASES = {
         'default': {
